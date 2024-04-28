@@ -51,25 +51,30 @@ func TestAutostarLongitude(t *testing.T) {
 
 	// Test east longitude
 	autostarLong := dms.AutostarLongitude(dms.Longitude)
-	assert.Equal(t, "348*26", autostarLong)
+	assert.Equal(t, "012*26", autostarLong)
 
 	// Test west longitude
 	dms.Longitude.Direction = "W"
 	autostarLong = dms.AutostarLongitude(dms.Longitude)
-	assert.Equal(t, "012*26", autostarLong)
+	assert.Equal(t, "348*34", autostarLong)
 
 	// Test 0 degree longitude
 	dms.Longitude = DMSAngle{Degrees: 0, Minutes: 0, Seconds: 0.0, Direction: "E"}
 	autostarLong = dms.AutostarLongitude(dms.Longitude)
-	assert.Equal(t, "360*00", autostarLong)
+	assert.Equal(t, "000*00", autostarLong)
 
 	// Test 180 degree longitude
 	dms.Longitude = DMSAngle{Degrees: 180, Minutes: 0, Seconds: 0.0, Direction: "W"}
 	autostarLong = dms.AutostarLongitude(dms.Longitude)
 	assert.Equal(t, "180*00", autostarLong)
 
-	// Test edge cases
+	// Test 90 E degree longitude
 	dms.Longitude = DMSAngle{Degrees: 90, Minutes: 0, Seconds: 0.0, Direction: "E"}
+	autostarLong = dms.AutostarLongitude(dms.Longitude)
+	assert.Equal(t, "090*00", autostarLong)
+
+	// Test 90 W degree longitude
+	dms.Longitude = DMSAngle{Degrees: 90, Minutes: 0, Seconds: 0.0, Direction: "W"}
 	autostarLong = dms.AutostarLongitude(dms.Longitude)
 	assert.Equal(t, "270*00", autostarLong)
 

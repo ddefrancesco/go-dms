@@ -82,9 +82,15 @@ func NewDMS(latlon DecimalDegrees) (*DMS, error) {
 func (d DMS) AutostarLongitude(longAngle DMSAngle) string {
 	var autostarLongDegrees int
 	var autostarLongMinutes int
-	if longAngle.Direction == "E" {
+
+	if longAngle.Direction == "W" {
 		autostarLongDegrees = 360 - longAngle.Degrees
-		autostarLongMinutes = longAngle.Minutes
+		if longAngle.Minutes == 0 {
+			autostarLongMinutes = 0
+		} else {
+			autostarLongMinutes = 60 - longAngle.Minutes
+		}
+
 	} else {
 		autostarLongDegrees = longAngle.Degrees
 		autostarLongMinutes = longAngle.Minutes
