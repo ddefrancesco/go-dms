@@ -3,6 +3,7 @@ package dms
 import (
 	"fmt"
 	"math"
+	"strconv"
 )
 
 // DecimalDegrees represent latitude/longitude of geographic coordinates as decimal frations of a degree.
@@ -13,14 +14,14 @@ type DecimalDegrees struct {
 
 // DMSAngle represents a single angle for degrees, miutes, seconds measurements
 type DMSAngle struct {
-	degrees   int
-	minutes   int
-	seconds   float64
-	direction string
+	Degrees   int
+	Minutes   int
+	Seconds   float64
+	Direction string
 }
 
 func (d DMSAngle) String() string {
-	return fmt.Sprintf(`%d°%d'%v" %s`, d.degrees, d.minutes, d.seconds, d.direction)
+	return fmt.Sprintf(`%d°%d'%v" %s`, d.Degrees, d.Minutes, d.Seconds, d.Direction)
 }
 
 // DMS coordinate
@@ -40,10 +41,10 @@ func newDMSAngle(decimalDegreeAngle float64, direction string) DMSAngle {
 	seconds := (decimalDegreeAngle - float64(degrees) - float64(minutes)/60) * 3600
 
 	return DMSAngle{
-		degrees:   int(degrees),
-		minutes:   int(minutes),
-		seconds:   seconds,
-		direction: direction,
+		Degrees:   int(degrees),
+		Minutes:   int(minutes),
+		Seconds:   seconds,
+		Direction: direction,
 	}
 }
 
@@ -76,4 +77,49 @@ func NewDMS(latlon DecimalDegrees) (*DMS, error) {
 	longitude := newDMSAngle(lon, lonDirection)
 
 	return &DMS{Latitude: latitude, Longitude: longitude}, nil
+}
+
+func (d DMS) AutostarLongitude(longAngle DMSAngle) string {
+	var autostarLongDegrees int
+	var autostarLongMinutes int
+	if longAngle.Direction == "E" {
+		autostarLongDegrees = 360 - longAngle.Degrees
+		autostarLongMinutes = longAngle.Minutes
+	} else {
+		autostarLongDegrees = longAngle.Degrees
+		autostarLongMinutes = longAngle.Minutes
+	}
+
+	autostarLongDegreesPadded := PadLeft(strconv.Itoa(autostarLongDegrees), 3) // fmt.Printf("%03s", strconv.Itoa(autostarLongDegrees))
+	autostarLongitude := autostarLongDegreesPadded
+	autostarLongitude += "*"
+	autostarLongitude += PadLeft(strconv.Itoa(autostarLongMinutes), 2)
+	return autostarLongitude
+}
+
+func (d DMS) AutostarLatitude(latAngle DMSAngle) string {
+	var autostarLatDegrees int
+	var autostarLatMinutes int
+	if latAngle.Direction == "N" {
+		autostarLatDegrees = latAngle.Degrees
+		autostarLatMinutes = latAngle.Minutes
+	} else {
+
+		autostarLatDegrees = (90 - latAngle.Degrees)
+		autostarLatMinutes = latAngle.Minutes
+	}
+
+	autostarLatDegreesPadded := PadLeft(strconv.Itoa(autostarLatDegrees), 2)
+	autostarLatitude := autostarLatDegreesPadded
+	autostarLatitude += "*"
+	autostarLatitude += PadLeft(strconv.Itoa(autostarLatMinutes), 2)
+
+	return autostarLatitude
+}
+
+func PadLeft(str string, length int) string {
+	for len(str) < length {
+		str = "0" + str
+	}
+	return str
 }
