@@ -1,4 +1,4 @@
-module github.com/KingAkeem/go-dms
+module github.com/ddefrancesco/go-dms
 
 go 1.20
 
