@@ -3,16 +3,18 @@ A small library for converting Decimal Degrees to Degrees, Minutes, Seconds coor
 
 Efficiently converting coordinates between DD and DMS
 
+Calculate Autostar Lat Long
+
 ## Installation
 
-`go get -u github.com/KingAkeem/go-dms/dms`
+`go get -u github.com/ddefrancesco/go-dms/dms`
 
 **test.go:**
 ```go
 package main
 
 import (
-    "github.com/KingAkeem/go-dms/dms"
+    "github.com/ddefrancesco/go-dms/dms"
     "fmt"
     "time"
     "log"
@@ -27,6 +29,17 @@ func main() {
     fmt.Printf("DMS coordinates: %+v\n", dmsCoordinate.String()) 
     end := time.Now()
     fmt.Printf("Function took %f seconds.\n", end.Sub(start).Seconds())
+
+    dms, _ := NewDMS(DecimalDegrees{Latitude: 41.82326, Longitude: 12.44474})
+
+	// Calc AS latitude
+    autostarLat := dms.AutostarLatitude(dms.Latitude)
+    fmt.Printf("Autostar latitude: %+v\n", autostarLat) 
+    //assert.Equal(t, "41*49", autostarLat)
+    // Calc AS longitude
+    autostarLong := dms.AutostarLongitude(dms.Longitude)
+    //assert.Equal(t, "348*26", autostarLong)
+    fmt.Printf("Autostar longitude: %+v\n", autostarLong) 
 }
 ```
 **>> go run test.go**
@@ -36,6 +49,9 @@ func main() {
     DMS coordinates:
     2°13'8.148000" N, 1°12'50.058000" E
     Function took 0.000049 seconds.
+
+    Autostar latitude: 41*49
+    Autostar longitude: 348*26
 ```
 
 **>> GOOS=js GOARCH=wasm go run -exec="$(go env GOROOT)/misc/wasm/go_js_wasm_exec" .** (Compiling as WebAssembly module for Node, run command in the same directory as `test.go`)
