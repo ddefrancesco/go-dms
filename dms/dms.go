@@ -111,7 +111,7 @@ func (d DMS) AutostarLatitude(latAngle DMSAngle) string {
 		autostarLatMinutes = latAngle.Minutes
 	} else {
 
-		autostarLatDegrees = (90 - latAngle.Degrees)
+		autostarLatDegrees = -latAngle.Degrees
 		autostarLatMinutes = latAngle.Minutes
 	}
 

@@ -93,7 +93,7 @@ func TestAutostarLatitude(t *testing.T) {
 	// Test south latitude
 	dms.Latitude.Direction = "S"
 	autostarLat = dms.AutostarLatitude(dms.Latitude)
-	assert.Equal(t, "49*11", autostarLat)
+	assert.Equal(t, "-41*49", autostarLat)
 
 	// Test 0 degree latitude
 	dms.Latitude = DMSAngle{Degrees: 0, Minutes: 0, Seconds: 0.0, Direction: "N"}
@@ -108,6 +108,6 @@ func TestAutostarLatitude(t *testing.T) {
 	// Test -90 degree latitude
 	dms.Latitude = DMSAngle{Degrees: 90, Minutes: 0, Seconds: 0.0, Direction: "S"}
 	autostarLat = dms.AutostarLatitude(dms.Latitude)
-	assert.Equal(t, "00*00", autostarLat)
+	assert.Equal(t, "-90*00", autostarLat)
 
 }
