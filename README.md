@@ -7,14 +7,14 @@ Calculate Autostar Lat Long
 
 ## Installation
 
-`go get -u github.com/ddefrancesco/go-dms/dms`
+`go get -u github.com/ddefrancesco/go-dms/dms/v2`
 
 **test.go:**
 ```go
 package main
 
 import (
-    "github.com/ddefrancesco/go-dms/dms"
+    "github.com/ddefrancesco/go-dms/dms/v2"
     "fmt"
     "time"
     "log"

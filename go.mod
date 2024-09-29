@@ -1,4 +1,4 @@
-module github.com/ddefrancesco/go-dms
+module github.com/ddefrancesco/go-dms/v2
 
 go 1.21.3
 
