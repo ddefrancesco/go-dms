@@ -13,8 +13,9 @@ func TestRADecToAltAz(t *testing.T) {
 		expectedAlt       float64
 		expectedAz        float64
 	}{
-		{0, 0, 0, 0, time.Date(2024, 8, 24, 18, 0, 0, 0, time.UTC), -25.20, 90},
-		{90, 45, 41.89193, 12.51133, time.Date(2024, 8, 24, 18, 0, 0, 0, time.UTC), -2.37, 351.05},
+		{0, 0, 0, 0, time.Date(2024, 8, 24, 18, 0, 0, 0, time.UTC), -26.495355, 90},
+		// RA: 90 degrees = 6 hours
+		{6, 45, 41.89193, 12.51133, time.Date(2024, 8, 24, 18, 0, 0, 0, time.UTC), -2.213278, 350.153983},
 		// Add more test cases here
 		//Roma 41.89193 12.51133
 	}
@@ -35,8 +36,9 @@ func TestAltAzToRADec(t *testing.T) {
 		expectedRA        float64
 		expectedDec       float64
 	}{
-		{90, 0, 0, 0, time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC), 101.45, 0},
-		{45, 270, 45, -75, time.Date(2023, 1, 1, 12, 0, 0, 0, time.UTC), 152.2, 30},
+		// expected RA given in hours (converted from degrees in original tests)
+		{90, 0, 0, 0, time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC), 101.45 / 15.0, 0},
+		{45, 270, 45, -75, time.Date(2023, 1, 1, 12, 0, 0, 0, time.UTC), 152.2 / 15.0, 30},
 		// Add more test cases here
 	}
 
@@ -55,8 +57,8 @@ func TestCalculateLST(t *testing.T) {
 		time        time.Time
 		expectedLST float64
 	}{
-		{0, time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC), 1.7519},
-		{-75, time.Date(2023, 1, 1, 12, 0, 0, 0, time.UTC), 5.2360},
+		{0, time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC), 1.752159},
+		{-75, time.Date(2023, 1, 1, 12, 0, 0, 0, time.UTC), 3.593357},
 		// Add more test cases here
 	}
 

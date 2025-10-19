@@ -111,3 +111,43 @@ func TestAutostarLatitude(t *testing.T) {
 	assert.Equal(t, "-90*00", autostarLat)
 
 }
+
+func TestAddSubtractDMS(t *testing.T) {
+	// create two simple DMS positions
+	a := DMS{
+		Latitude:  DMSAngle{Degrees: 10, Minutes: 20, Seconds: 30, Direction: "N"},
+		Longitude: DMSAngle{Degrees: 20, Minutes: 10, Seconds: 0, Direction: "E"},
+	}
+
+	b := DMS{
+		Latitude:  DMSAngle{Degrees: 5, Minutes: 40, Seconds: 40, Direction: "N"},
+		Longitude: DMSAngle{Degrees: 10, Minutes: 50, Seconds: 30, Direction: "W"},
+	}
+
+	sum := a.Add(b)
+	// Latitude: 10°20'30" + 5°40'40" = 16°1'10"
+	assert.Equal(t, 16, sum.Latitude.Degrees)
+	assert.Equal(t, 1, sum.Latitude.Minutes)
+	// seconds may be float, compare approx
+	assert.InDelta(t, 10.0, sum.Latitude.Seconds, 1e-6)
+	assert.Equal(t, "N", sum.Latitude.Direction)
+
+	// Longitude: 20°10'0" E + 10°50'30" W => 20°10'0" - 10°50'30" = 9°19'30" E
+	assert.Equal(t, 9, sum.Longitude.Degrees)
+	assert.Equal(t, 19, sum.Longitude.Minutes)
+	assert.InDelta(t, 30.0, sum.Longitude.Seconds, 1e-6)
+	assert.Equal(t, "E", sum.Longitude.Direction)
+
+	// subtraction a - b: latitude -> 4°39'50" N
+	diff := a.Subtract(b)
+	assert.Equal(t, 4, diff.Latitude.Degrees)
+	assert.Equal(t, 39, diff.Latitude.Minutes)
+	assert.InDelta(t, 50.0, diff.Latitude.Seconds, 1e-6)
+	assert.Equal(t, "N", diff.Latitude.Direction)
+
+	// longitude: 20°10'0" E - 10°50'30" W => 20°10'0" + 10°50'30" = 31°0'30" E
+	assert.Equal(t, 31, diff.Longitude.Degrees)
+	assert.Equal(t, 0, diff.Longitude.Minutes)
+	assert.InDelta(t, 30.0, diff.Longitude.Seconds, 1e-6)
+	assert.Equal(t, "E", diff.Longitude.Direction)
+}

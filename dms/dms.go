@@ -129,3 +129,79 @@ func PadLeft(str string, length int) string {
 	}
 	return str
 }
+
+// helpers to convert DMSAngle to total seconds (signed) and back
+func angleToTotalSeconds(a DMSAngle, isLatitude bool) float64 {
+	total := float64(a.Degrees*3600 + a.Minutes*60)
+	total += a.Seconds
+	// decide sign based on Direction
+	if isLatitude {
+		if a.Direction == "S" {
+			total = -total
+		}
+	} else {
+		if a.Direction == "W" {
+			total = -total
+		}
+	}
+	return total
+}
+
+func totalSecondsToAngle(total float64, isLatitude bool) DMSAngle {
+	dirPos := "N"
+	dirNeg := "S"
+	if !isLatitude {
+		dirPos = "E"
+		dirNeg = "W"
+	}
+
+	direction := dirPos
+	if total < 0 {
+		direction = dirNeg
+	}
+
+	absTotal := math.Abs(total)
+	degrees := int(absTotal) / 3600
+	rem := absTotal - float64(degrees*3600)
+	minutes := int(rem) / 60
+	seconds := rem - float64(minutes*60)
+
+	return DMSAngle{
+		Degrees:   degrees,
+		Minutes:   minutes,
+		Seconds:   seconds,
+		Direction: direction,
+	}
+}
+
+// Add returns a new DMS which is the coordinate-wise sum of d and other.
+// Latitude directions are N/S and longitude directions are E/W; the
+// result direction is determined by the signed sum.
+func (d DMS) Add(other DMS) DMS {
+	latSum := angleToTotalSeconds(d.Latitude, true) + angleToTotalSeconds(other.Latitude, true)
+	lonSum := angleToTotalSeconds(d.Longitude, false) + angleToTotalSeconds(other.Longitude, false)
+
+	return DMS{
+		Latitude:  totalSecondsToAngle(latSum, true),
+		Longitude: totalSecondsToAngle(lonSum, false),
+	}
+}
+
+// Subtract returns a new DMS which is the coordinate-wise difference d - other.
+func (d DMS) Subtract(other DMS) DMS {
+	latDiff := angleToTotalSeconds(d.Latitude, true) - angleToTotalSeconds(other.Latitude, true)
+	lonDiff := angleToTotalSeconds(d.Longitude, false) - angleToTotalSeconds(other.Longitude, false)
+
+	return DMS{
+		Latitude:  totalSecondsToAngle(latDiff, true),
+		Longitude: totalSecondsToAngle(lonDiff, false),
+	}
+}
+
+// DeltaAngle computes the difference (a - b) between two DMSAngle values.
+// The isLatitude flag controls interpretation of Direction (true => N/S, false => E/W).
+// Result is normalized (degrees/minutes/seconds with Direction set accordingly).
+func DeltaAngle(a, b DMSAngle, isLatitude bool) DMSAngle {
+	total := angleToTotalSeconds(a, isLatitude) - angleToTotalSeconds(b, isLatitude)
+	return totalSecondsToAngle(total, isLatitude)
+}
